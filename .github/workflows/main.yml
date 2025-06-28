@@ -75,7 +75,7 @@ jobs:
         export STRIP=$NDK_TOOLCHAIN/llvm-strip
         export PKG_CONFIG_PATH=/data/sysroot/lib/pkgconfig:/data/sysroot/lib64/pkgconfig:$PKG_CONFIG_PATH
 
-        ./configure --host $TARGET --prefix=/data/sysroot
+        CFLAGS="-I/data/sysroot/include -L/data/sysroot/lib -lattr" ./configure --host $TARGET --prefix=/data/sysroot
         make -j $(nproc)
         sudo make install
         echo "RELEASE_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
