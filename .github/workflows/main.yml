@@ -29,6 +29,12 @@ jobs:
 
     - name: Install dependencies
       run: sudo apt-get install -y build-essential unzip zlib1g-dev libtool bison flex autoconf make
+
+    - name: Download Dependencies 
+      run: |
+        libattr=$(curl -s https://api.github.com/repos/DreamConnected/libattr-dev/releases/latest | grep browser_download_url | cut -d'"' -f4 |grep -E 'zip$')
+        libattr_file=$(curl -s https://api.github.com/repos/DreamConnected/libattr-dev/releases/latest | grep name | cut -d'"' -f4 |grep -E 'zip$')
+        wget -q ${libattr} && sudo unzip -q -o ${libattr_file} -d / && echo 1/1 ${libattr} ${libattr_file}
         
     - name: Set build parameters
       id: vars
@@ -67,6 +73,7 @@ jobs:
         export LD=$NDK_TOOLCHAIN/ld
         export RANLIB=$NDK_TOOLCHAIN/llvm-ranlib
         export STRIP=$NDK_TOOLCHAIN/llvm-strip
+        export PKG_CONFIG_PATH=/data/sysroot/lib/pkgconfig:/data/sysroot/lib64/pkgconfig:$PKG_CONFIG_PATH
 
         ./configure --host $TARGET --prefix=/data/sysroot
         make -j $(nproc)
